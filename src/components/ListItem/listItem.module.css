@@ -1,0 +1,31 @@
+.listItemContainer {
+  width: 88%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem;
+  background-color: #8758ff;
+  border-radius: 0.4rem;
+}
+
+.todoText {
+  color: white;
+  width: 80%;
+  word-wrap: break-word;
+  cursor: pointer;
+}
+
+.completedText {
+  text-decoration: line-through;
+  color: #c5aeff;
+}
+
+.editIcon {
+  color: white;
+  cursor: pointer;
+}
+
+.deleteIcon {
+  cursor: pointer;
+  color: white;
+  margin-left: 1rem;
+}

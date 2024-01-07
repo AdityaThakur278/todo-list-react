@@ -1,109 +1,97 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import uuid from "react-uuid";
 
-import AddTask from "./components/AddTask";
-import ListItem from "./components/ListItem";
-import "./styles.css";
+import TaskListCard from "./components/TaskListCard";
+import UserInput from "./components/UserInput";
+
+import styles from "./app.module.css";
 
 export default function App() {
-  const [taskList, setTaskList] = useState([]);
+  const [listData, setListData] = useState([]);
 
-  const handleAddNewTask = useCallback((taskValue) => {
-    setTaskList((currentList) => [
-      {
-        value: taskValue,
-        id: uuid(),
-        editMode: false,
-      },
-      ...currentList,
+  const handleAddList = (listName) => {
+    setListData((currentData) => [
+      { listId: uuid(), listName, taskList: [] },
+      ...currentData,
     ]);
-  }, []);
+  };
 
-  const handleTaskEditSubmit = useCallback(
-    (selectedId) => (taskValue) => {
-      setTaskList((taskList) =>
-        taskList.map((taskInfo) => {
-          const { id } = taskInfo || {};
-          if (id !== selectedId) return taskInfo;
-
+  const handleTaskListUpdated = (listId, updatedTaskList) => {
+    setListData((currentData) =>
+      currentData.map((currentTaskListData) => {
+        const { listId: currentListId } = currentTaskListData;
+        if (currentListId === listId)
           return {
-            ...taskInfo,
-            value: taskValue,
-            editMode: false,
+            ...currentTaskListData,
+            taskList: updatedTaskList,
           };
-        }),
-      );
-    },
-    [],
-  );
-
-  const handleEditButtonClick = useCallback((selectedId) => {
-    setTaskList((taskList) =>
-      taskList.map((taskInfo) => {
-        const { id } = taskInfo || {};
-        if (id !== selectedId) return taskInfo;
-
-        return {
-          ...taskInfo,
-          editMode: true,
-        };
-      }),
+        return currentTaskListData;
+      })
     );
-  }, []);
+  };
 
-  const handleTaskDelete = useCallback((selectedId) => {
-    setTaskList((taskList) =>
-      taskList.filter((taskInfo) => {
-        const { id } = taskInfo || {};
-        return id !== selectedId;
-      }),
+  const handleTaskListDelete = (listId) => {
+    setListData((currentData) =>
+      currentData.filter((currentTaskListData) => {
+        const { listId: currentListId } = currentTaskListData;
+        return listId !== currentListId;
+      })
     );
-  }, []);
+  };
 
-  const handleToggleCompleted = useCallback((selectedId) => {
-    setTaskList((taskList) =>
-      taskList.map((taskInfo) => {
-        const { id, isTaskCompleted = false } = taskInfo || {};
-        if (id !== selectedId) return taskInfo;
-
-        return {
-          ...taskInfo,
-          isTaskCompleted: !isTaskCompleted,
-        };
-      }),
+  const handleListNameEdit = (listId, updatedListName) => {
+    setListData((currentData) =>
+      currentData.map((currentTaskListData) => {
+        const { listId: currentListId } = currentTaskListData;
+        if (currentListId === listId)
+          return {
+            ...currentTaskListData,
+            listName: updatedListName,
+          };
+        return currentTaskListData;
+      })
     );
-  }, []);
+  };
 
   return (
-    <div className="app">
-      <p className="header-title">Get Things Done !</p>
-      <div style={{ marginTop: "12px" }} />
-      <AddTask initialTaskValue="" onAddTask={handleAddNewTask} />
-      {taskList.map((taskInfo) => {
-        const { editMode, value, id } = taskInfo || {};
-
-        return editMode ? (
-          <>
-            <div style={{ marginTop: "12px" }} />
-            <AddTask
-              key={id}
-              initialTaskValue={value}
-              onAddTask={handleTaskEditSubmit(id)}
+    <div className={styles.parentContainer}>
+      <UserInput
+        containerStyle={styles.userInputContainerStyle}
+        inputStyle={styles.userInputStyle}
+        buttonStyle={styles.userInputButtonStyle}
+        placeholder={"Add new todo list"}
+        buttonText={"Add Todo"}
+        onSubmit={handleAddList}
+      />
+      <div className={styles.taskListContainer}>
+        {listData.map((todoList) => {
+          const { listId, listName, taskList } = todoList;
+          return (
+            <TaskListCard
+              key={listId}
+              listId={listId}
+              listName={listName}
+              taskList={taskList}
+              onTaskListUpdate={handleTaskListUpdated}
+              onTaskListDelete={handleTaskListDelete}
+              onListNameEdit={handleListNameEdit}
             />
-          </>
-        ) : (
-          <>
-            <div style={{ marginTop: "12px" }} />
-            <ListItem
-              key={id}
-              taskInfo={taskInfo}
-              onToggleCompleted={handleToggleCompleted}
-              onEditButtonClick={handleEditButtonClick}
-              onDeleteButtonClick={handleTaskDelete}
-            />
-          </>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 }
+
+/*
+data structure --> [{
+  listId: 'uudi1',
+  listName: 'list1',
+  taskList: [{
+    id: 'uuid2',
+    value: 'value1,
+    editMode: false,
+    isTaskCompleted: false,
+  }]
+}]
+*/

@@ -1,8 +1,11 @@
 import { useCallback } from "react";
+import cx from "classnames";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+
+import styles from "./listItem.module.css";
 
 const ListItem = (props) => {
   const {
@@ -26,21 +29,23 @@ const ListItem = (props) => {
   }, [onToggleCompleted, id]);
 
   return (
-    <div className="list-item-container">
+    <div className={styles.listItemContainer}>
       <p
         onClick={handleToggleCompleted}
-        className={`todo-text ${isTaskCompleted ? "completed-text" : ""}`}
+        className={cx(styles.todoText, {
+          [styles.completedText]: isTaskCompleted,
+        })}
       >
         {value}
       </p>
       <div>
         <FontAwesomeIcon
-          className="edit-icon"
+          className={styles.editIcon}
           icon={faPenToSquare}
           onClick={handleEditButtonClick}
         />
         <FontAwesomeIcon
-          className="delete-icon"
+          className={styles.deleteIcon}
           icon={faTrash}
           onClick={handleDeleteButtonClick}
         />

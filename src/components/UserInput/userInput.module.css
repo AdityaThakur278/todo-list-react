@@ -1,0 +1,28 @@
+.containerStyle {
+  display: flex;
+  width: 20rem; 
+}
+
+.inputContainer {
+  width: 75%;
+  outline: none;
+  border: 0.1rem solid #8758ff;
+  background-color: #1a1a40;
+  color: white;
+  padding: 0 0.38rem;
+  border-top-left-radius: 0.4rem;
+  border-bottom-left-radius: 0.4rem;
+}
+
+.buttonStyle {
+  background-color: #8758ff;
+  width: 25%;
+  color: white;
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2.4rem;
+  border-top-right-radius: 0.4rem;
+  border-bottom-right-radius: 0.4rem;
+}
