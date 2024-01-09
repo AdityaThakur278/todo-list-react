@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { Draggable } from "react-beautiful-dnd";
 import cx from "classnames";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,6 +10,7 @@ import styles from "./listItem.module.css";
 
 const ListItem = (props) => {
   const {
+    index,
     taskInfo,
     onEditButtonClick,
     onDeleteButtonClick,
@@ -29,28 +31,37 @@ const ListItem = (props) => {
   }, [onToggleCompleted, id]);
 
   return (
-    <div className={styles.listItemContainer}>
-      <p
-        onClick={handleToggleCompleted}
-        className={cx(styles.todoText, {
-          [styles.completedText]: isTaskCompleted,
-        })}
-      >
-        {value}
-      </p>
-      <div>
-        <FontAwesomeIcon
-          className={styles.editIcon}
-          icon={faPenToSquare}
-          onClick={handleEditButtonClick}
-        />
-        <FontAwesomeIcon
-          className={styles.deleteIcon}
-          icon={faTrash}
-          onClick={handleDeleteButtonClick}
-        />
-      </div>
-    </div>
+    <Draggable draggableId={id} index={index}>
+      {(provided, snapshot) => (
+        <div
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          ref={provided.innerRef}
+          className={styles.listItemContainer}
+        >
+          <p
+            onClick={handleToggleCompleted}
+            className={cx(styles.todoText, {
+              [styles.completedText]: isTaskCompleted,
+            })}
+          >
+            {value}
+          </p>
+          <div>
+            <FontAwesomeIcon
+              className={styles.editIcon}
+              icon={faPenToSquare}
+              onClick={handleEditButtonClick}
+            />
+            <FontAwesomeIcon
+              className={styles.deleteIcon}
+              icon={faTrash}
+              onClick={handleDeleteButtonClick}
+            />
+          </div>
+        </div>
+      )}
+    </Draggable>
   );
 };
 

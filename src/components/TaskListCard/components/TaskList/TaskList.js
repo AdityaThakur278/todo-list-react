@@ -71,11 +71,11 @@ const TaskList = (props) => {
     [listId, onTaskListUpdate, taskList]
   );
 
-  return taskList.map((taskInfo) => {
+  return taskList.map((taskInfo, index) => {
     const { editMode, value, id } = taskInfo || {};
 
     return editMode ? (
-      <>
+      <div key={id} className={styles.listItemWrapper}>
         <div style={{ marginTop: "12px" }} />
         <UserInput
           containerStyle={styles.userInputContainerStyle}
@@ -83,18 +83,19 @@ const TaskList = (props) => {
           buttonText={"Update Task"}
           onSubmit={handleTaskEditSubmit(id)}
         />
-      </>
+      </div>
     ) : (
-      <>
+      <div key={id} className={styles.listItemWrapper}>
         <div style={{ marginTop: "12px" }} />
         <ListItem
           key={id}
+          index={index}
           taskInfo={taskInfo}
           onToggleCompleted={handleToggleCompleted}
           onEditButtonClick={handleEditButtonClick}
           onDeleteButtonClick={handleTaskDelete}
         />
-      </>
+      </div>
     );
   });
 };

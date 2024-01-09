@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import uuid from "react-uuid";
+import { Droppable } from "react-beautiful-dnd";
 
 import UserInput from "../UserInput";
 import CardHeader from "./components/CardHeader";
@@ -33,7 +34,7 @@ const TaskListCard = (props) => {
   );
 
   return (
-    <div className={styles.app}>
+    <div className={styles.parentContainer}>
       <CardHeader
         listName={listName}
         listId={listId}
@@ -47,11 +48,22 @@ const TaskListCard = (props) => {
         buttonText={"Add Task"}
         onSubmit={handleAddNewTask}
       />
-      <TaskList
-        taskList={taskList}
-        listId={listId}
-        onTaskListUpdate={onTaskListUpdate}
-      />
+      <Droppable droppableId={listId}>
+        {(provided) => (
+          <div
+            className={styles.taskListContainer}
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            <TaskList
+              taskList={taskList}
+              listId={listId}
+              onTaskListUpdate={onTaskListUpdate}
+            />
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
     </div>
   );
 };
