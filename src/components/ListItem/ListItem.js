@@ -3,8 +3,7 @@ import { Draggable } from "react-beautiful-dnd";
 import cx from "classnames";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import styles from "./listItem.module.css";
 
@@ -32,7 +31,7 @@ const ListItem = (props) => {
 
   return (
     <Draggable draggableId={id} index={index}>
-      {(provided, snapshot) => (
+      {(provided) => (
         <div
           {...provided.draggableProps}
           {...provided.dragHandleProps}

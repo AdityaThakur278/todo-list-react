@@ -1,15 +1,17 @@
 import { useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPenToSquare,
+  faBars,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 
 import UserInput from "../../../UserInput";
-
 import styles from "./cardHeader.module.css";
 
 const CardHeader = (props) => {
-  const { listName, listId, onTaskListDelete, onListNameEdit } = props;
+  const { listName, listId, onTaskListDelete, onListNameEdit, ...rest } = props;
   const [isEditMode, setIsEditMode] = useState(false);
 
   const handleDeleteButtonClick = () => {
@@ -32,7 +34,12 @@ const CardHeader = (props) => {
         />
       ) : (
         <>
-          <p className={styles.headerTitle}>{listName}</p>
+          <div className={styles.leftContainer}>
+            <div {...rest}>
+              <FontAwesomeIcon className={styles.barIcon} icon={faBars} />
+            </div>
+            <p className={styles.headerTitle}>{listName}</p>
+          </div>
           <div>
             <FontAwesomeIcon
               className={styles.editIcon}

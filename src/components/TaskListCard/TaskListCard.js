@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import uuid from "react-uuid";
-import { Droppable } from "react-beautiful-dnd";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 
 import UserInput from "../UserInput";
 import CardHeader from "./components/CardHeader";
@@ -11,6 +11,7 @@ import styles from "./taskListCard.module.css";
 const TaskListCard = (props) => {
   const {
     listId,
+    index,
     listName,
     taskList,
     onTaskListUpdate,
@@ -34,37 +35,47 @@ const TaskListCard = (props) => {
   );
 
   return (
-    <div className={styles.parentContainer}>
-      <CardHeader
-        listName={listName}
-        listId={listId}
-        onTaskListDelete={onTaskListDelete}
-        onListNameEdit={onListNameEdit}
-      />
-      <div style={{ marginTop: "12px" }} />
-      <UserInput
-        containerStyle={styles.userInputContainerStyle}
-        placeholder={"What is the task today?"}
-        buttonText={"Add Task"}
-        onSubmit={handleAddNewTask}
-      />
-      <Droppable droppableId={listId}>
-        {(provided) => (
-          <div
-            className={styles.taskListContainer}
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-          >
-            <TaskList
-              taskList={taskList}
-              listId={listId}
-              onTaskListUpdate={onTaskListUpdate}
-            />
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </div>
+    <Draggable draggableId={listId} index={index}>
+      {(provided) => (
+        <div
+          className={styles.parentContainer}
+          {...provided.draggableProps}
+          ref={provided.innerRef}
+          style={provided.draggableProps.style}
+        >
+          <CardHeader
+            listName={listName}
+            listId={listId}
+            onTaskListDelete={onTaskListDelete}
+            onListNameEdit={onListNameEdit}
+            {...provided.dragHandleProps}
+          />
+          <div style={{ marginTop: "12px" }} />
+          <UserInput
+            containerStyle={styles.userInputContainerStyle}
+            placeholder={"What is the task?"}
+            buttonText={"Add Task"}
+            onSubmit={handleAddNewTask}
+          />
+          <Droppable droppableId={listId} type="droppableSubItem">
+            {(provided) => (
+              <div
+                className={styles.taskListContainer}
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                <TaskList
+                  taskList={taskList}
+                  listId={listId}
+                  onTaskListUpdate={onTaskListUpdate}
+                />
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </div>
+      )}
+    </Draggable>
   );
 };
 

@@ -1,10 +1,11 @@
 import { useState } from "react";
 import uuid from "react-uuid";
-import { DragDropContext } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 import TaskListCard from "./components/TaskListCard";
 import UserInput from "./components/UserInput";
 
+import { handleDragEnd } from "./app.helpers";
 import styles from "./app.module.css";
 
 export default function App() {
@@ -55,40 +56,7 @@ export default function App() {
   };
 
   const onDragEndForListItem = (result) => {
-    const { source, destination } = result;
-
-    if (!destination) return;
-
-    const sourceListId = source?.droppableId;
-    const sourceListItemIndex = source?.index;
-
-    const destinationListId = destination?.droppableId;
-    const destinationListItemIndex = destination?.index;
-
-    setListData((currentListData) => {
-      const sourceListData = currentListData.find(
-        (listData) => sourceListId === listData?.listId
-      );
-      const destinationListData = currentListData.find(
-        (listData) => destinationListId === listData?.listId
-      );
-
-      const listItemData = sourceListData?.taskList[sourceListItemIndex];
-      sourceListData?.taskList.splice(sourceListItemIndex, 1);
-      destinationListData?.taskList.splice(
-        destinationListItemIndex,
-        0,
-        listItemData
-      );
-
-      return currentListData.map((listData) => {
-        const { listId } = listData;
-
-        if (listId === sourceListId) return sourceListData;
-        if (listId === destinationListId) return destinationListData;
-        return listData;
-      });
-    });
+    handleDragEnd({ result, setListData });
   };
 
   return (
@@ -102,22 +70,36 @@ export default function App() {
         onSubmit={handleAddList}
       />
       <DragDropContext onDragEnd={onDragEndForListItem}>
-        <div className={styles.taskListContainer}>
-          {listData.map((todoList) => {
-            const { listId, listName, taskList } = todoList;
-            return (
-              <TaskListCard
-                key={listId}
-                listId={listId}
-                listName={listName}
-                taskList={taskList}
-                onTaskListUpdate={handleTaskListUpdated}
-                onTaskListDelete={handleTaskListDelete}
-                onListNameEdit={handleListNameEdit}
-              />
-            );
-          })}
-        </div>
+        <Droppable
+          droppableId="taskListContainer"
+          direction="horizontal"
+          type="droppableItem"
+        >
+          {(provided) => (
+            <div
+              className={styles.taskListContainer}
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              {listData.map((todoList, index) => {
+                const { listId, listName, taskList } = todoList;
+                return (
+                  <TaskListCard
+                    key={listId}
+                    index={index}
+                    listId={listId}
+                    listName={listName}
+                    taskList={taskList}
+                    onTaskListUpdate={handleTaskListUpdated}
+                    onTaskListDelete={handleTaskListDelete}
+                    onListNameEdit={handleListNameEdit}
+                  />
+                );
+              })}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
       </DragDropContext>
     </div>
   );
