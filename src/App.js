@@ -1,15 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import uuid from "react-uuid";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
 
 import TaskListCard from "./components/TaskListCard";
 import UserInput from "./components/UserInput";
+import DemoModal from "./components/DemoModal";
 
 import { handleDragEnd } from "./app.helpers";
 import styles from "./app.module.css";
 
 export default function App() {
   const [listData, setListData] = useState([]);
+  const [isDemoModalVisible, setIsDemoModalVisible] = useState(false);
+
+  useEffect(() => {
+    const retrievedListData = localStorage.getItem("appListData");
+    const parsedListData = JSON.parse(retrievedListData) || [];
+    setListData(parsedListData);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("appListData", JSON.stringify(listData));
+  }, [listData]);
 
   const handleAddList = (listName) => {
     setListData((currentData) => [
@@ -61,14 +75,22 @@ export default function App() {
 
   return (
     <div className={styles.parentContainer}>
-      <UserInput
-        containerStyle={styles.userInputContainerStyle}
-        inputStyle={styles.userInputStyle}
-        buttonStyle={styles.userInputButtonStyle}
-        placeholder={"Add new todo list"}
-        buttonText={"Add Todo"}
-        onSubmit={handleAddList}
-      />
+      <div className={styles.headerContainer}>
+        <UserInput
+          containerStyle={styles.userInputContainerStyle}
+          inputStyle={styles.userInputStyle}
+          buttonStyle={styles.userInputButtonStyle}
+          placeholder={"Add new todo list"}
+          buttonText={"Add Todo"}
+          onSubmit={handleAddList}
+        />
+        <div onClick={() => setIsDemoModalVisible(true)}>
+          <FontAwesomeIcon
+            className={styles.questionIcon}
+            icon={faCircleQuestion}
+          />
+        </div>
+      </div>
       <DragDropContext onDragEnd={onDragEndForListItem}>
         <Droppable
           droppableId="taskListContainer"
@@ -101,6 +123,10 @@ export default function App() {
           )}
         </Droppable>
       </DragDropContext>
+      <DemoModal
+        isVisible={isDemoModalVisible}
+        setIsDemoModalVisible={setIsDemoModalVisible}
+      />
     </div>
   );
 }

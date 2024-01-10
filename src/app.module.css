@@ -15,6 +15,22 @@ body {
   height: 100vh;
 }
 
+.headerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+.questionIcon {
+  font-size: 2rem;
+  color: #1a1a40;
+}
+
+.questionIcon:hover {
+  transform: scale(1.1);
+}
+
 .taskListContainer {
   display: flex;
   overflow-x: auto;
@@ -25,7 +41,6 @@ body {
 .userInputContainerStyle {
   width: 50%;
   padding-top: 2rem;
-  padding-left: 2rem;
 }
 
 .userInputStyle {
